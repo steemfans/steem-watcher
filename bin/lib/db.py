@@ -59,7 +59,7 @@ WHERE
     op_type = %s
 GROUP BY op_data
 ORDER BY total DESC
-LIMIT 5;
+LIMIT 10;
 '''
 
 def connect_db():

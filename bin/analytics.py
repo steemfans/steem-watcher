@@ -50,17 +50,23 @@ def run():
         3: ":three:",
         4: ":four:",
         5: ":five:",
+        6: ":six:",
+        7: ":seven:",
+        8: ":eight:",
+        9: ":nine:",
+        10: ":keycap_ten:",
     }
 
     order_list = []
     i = 1
     for o in claim_account_order_list:
         op_detail = json.loads(o['op_data'])
-        order_list.append("%s %s               %s" % (number_icons[i], op_detail[1]['creator'], o['total']))
+        creator = "<https://steemd.com/@%s|@%s>" % (op_detail[1]['creator'], op_detail[1]['creator'])
+        order_list.append("%s %s               %s" % (number_icons[i], creator, o['total']))
         i = i + 1
 
     msg = ''':evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree:
-:earth_asia: 过去24小时用户注册数量汇总：
+:earth_asia: 过去 24 小时用户注册数量汇总：
 
 <https://steemd.com/@steem|@steem> 申请牌子数量：        %s
 <https://steemd.com/@steem|@steem> 使用牌子数量：        %s
@@ -69,7 +75,7 @@ def run():
 使用牌子总量：         %s
 使用steem注册用户数量： %s
 
-:gem: 过去24小时申请牌子排名前5：
+:gem: 过去 24 小时申请牌子排名前 10：
 
 %s
 '''
