@@ -1,9 +1,11 @@
 # Steem Watcher
+
 该项目的目的是为了定制化监控链上数据.
 目前只监控 `claim_account`, `create_claimed_account`, `account_create` 三种数据.
 > 如果你想监测更多类型数据，请自行修改 `bin/lib/opType.py`
 
 # 部署
+
 由于使用了 `docker` 技术，整个部署过程非常简单。
 
 ## 克隆代码
@@ -52,6 +54,7 @@ SLACK_URL=                      # Slack 的 Webhook 地址
 
 * `crontab` 配置文件在 `config/crontab`，需要用 `root` 权限修改
 * `crontab` 日志在 `./logs` 目录下 
+* 如需删除数据库重新开始，请先停止，然后 `sudo rm -rf db/*`
 
 # 如有疑问
 
