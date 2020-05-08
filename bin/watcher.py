@@ -7,8 +7,11 @@ from steem.blockchain import Blockchain
 from steem.steemd import Steemd
 import pymysql
 from lib import slack
+from lib import db
 
 env_dist = os.environ
+
+# init block config
 steemd_url = env_dist.get('STEEMD')
 if steemd_url == None:
     steemd_url = 'https://api.steemit.com'
@@ -30,111 +33,14 @@ if env_block_num == None:
 else:
     start_block_num = int(env_block_num)
 
-mysql_host = env_dist.get('MYSQL_HOST')
-if mysql_host == None:
-    mysql_host = '172.22.2.2'
-print('MYSQL_HOST: %s' % (mysql_host))
+db_connection = None
 
-mysql_user = env_dist.get('MYSQL_USER')
-if mysql_user == None:
-    mysql_user = 'root'
-print('MYSQL_USER: %s' % (mysql_user))
-
-mysql_pass = env_dist.get('MYSQL_PASS')
-if mysql_pass == None:
-    mysql_pass = '123456'
-print('MYSQL_PASS: %s' % (mysql_pass))
-
+# init blockchain
 steemd_nodes = [
     steemd_url,
 ]
 s = Steemd(nodes=steemd_nodes)
 b = Blockchain(s)
-db_connection = None
-
-def connect_db():
-    global db_connection
-    # Connect to the database
-    try:
-        db_connection = pymysql.connect(
-            host=mysql_host,
-            user=mysql_user,
-            password=mysql_pass,
-            db='watcher',
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-    except:
-        print('mysql is not ready.')
-        sys.exit()
-
-def create_db():
-    print("start creating db")
-    try:
-        connection = pymysql.connect(
-            host=mysql_host,
-            user=mysql_user,
-            password=mysql_pass,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        sql = "CREATE DATABASE watcher";
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql)
-            connection.commit()
-            print("Successfully added database")
-        except:
-            connection.rollback()
-            print(sys.exc_info())
-    except:
-        print("MYSQL has not been ready.")
-        sys.exit()
-    finally:
-        connection.close()
-
-def create_table():
-    print("start creating table")
-    try:
-        connection = pymysql.connect(
-            host=mysql_host,
-            user=mysql_user,
-            password=mysql_pass,
-            db='watcher',
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-        sql1 = '''
-        CREATE TABLE `watcher`.`account_create_log` (
-            `id` INT NOT NULL AUTO_INCREMENT,
-            `op_type` INT NOT NULL,
-            `block_num` INT NOT NULL,
-            `creator` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
-            `original_data` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
-            `timestamp` INT NOT NULL,
-            PRIMARY KEY (`id`),
-            INDEX `op_type_index` (`op_type`));
-        '''
-        sql2 = '''
-        CREATE TABLE `watcher`.`task_log` (
-            `block_num` INT NOT NULL,
-            `status` INT NOT NULL,
-            PRIMARY KEY (`block_num`));
-        '''
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql1)
-                cursor.execute(sql2)
-            connection.commit()
-            print("Successfully added table")
-        except:
-            connection.rollback()
-            print(sys.exc_info())
-    except:
-        print("MYSQL has not been ready.")
-        sys.exit()
-    finally:
-        connection.close()
 
 def worker(start, end):
     try:
@@ -191,23 +97,18 @@ def get_start_num_from_db():
         sql = "SELECT `block_num` FROM `task_log` ORDER BY `block_num` DESC LIMIT 1"
         cursor.execute(sql)
         log = cursor.fetchone()
-        print(log)
+        print('start num from db:', log)
     if log == None:
         return 0
     else:
         return int(log['block_num']) + 1
 
 def run():
-    global start_block_num
-    steemd_nodes = [
-        steemd_url,
-    ]
-    s = Steemd(nodes=steemd_nodes)
-    b = Blockchain(s)
+    global start_block_num, s, b, db_connection
 
-    create_db()
-    create_table()
-    connect_db()
+    db.create_db()
+    db.create_table()
+    db_connection = db.connect_db()
 
     start_block_num_from_db = get_start_num_from_db()
     if start_block_num_from_db != 0:
