@@ -5,8 +5,10 @@ from contextlib import suppress
 from concurrent import futures
 from steem.blockchain import Blockchain
 from steem.steemd import Steemd
+import traceback
 from lib import slack
 from lib import db
+from lib import opType
 
 env_dist = os.environ
 
@@ -63,22 +65,12 @@ def worker(start, end):
             block_num = block_info['block_num']
             transactions = block_info['transactions']
             for trans in transactions:
+                # print(trans)
                 operations = trans['operations']
                 for op in operations:
-                    if op[0] == 'claim_account':
-                        # op_type 1 = claim_account
+                    if op[0] in opType.watchingTypes.keys():
                         with db_connection.cursor() as cursor:
-                            cursor.execute(sql % (1, block_num, op[1]['creator'], json.dumps(op), timestamp))
-                        db_connection.commit()
-                    if op[0] == 'create_claimed_account':
-                        # op_type 2 = create_claimed_account
-                        with db_connection.cursor() as cursor:
-                            cursor.execute(sql % (2, block_num, op[1]['creator'], json.dumps(op), timestamp))
-                        db_connection.commit()
-                    if op[0] == 'account_create':
-                        # op_type 3 = account_create
-                        with db_connection.cursor() as cursor:
-                            cursor.execute(sql % (3, block_num, op[1]['creator'], json.dumps(op), timestamp))
+                            cursor.execute(sql % (opType.watchingTypes[op[0]], block_num, op[1]['creator'], json.dumps(op), timestamp))
                         db_connection.commit()
         # keep log
         with db_connection.cursor() as cursor:
