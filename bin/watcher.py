@@ -5,7 +5,6 @@ from contextlib import suppress
 from concurrent import futures
 from steem.blockchain import Blockchain
 from steem.steemd import Steemd
-import pymysql
 from lib import slack
 from lib import db
 
@@ -17,11 +16,6 @@ steemd_url = env_dist.get('STEEMD')
 if steemd_url == None:
     steemd_url = 'https://api.steemit.com'
 print('STEEMD: %s' % steemd_url)
-
-watch_account = env_dist.get('WATCH_ACCOUNT')
-if watch_account == None:
-    watch_account = 'steem'
-print('WATCH_ACCOUNT: %s' % watch_account)
 
 worker_num = env_dist.get('WORKER_NUM')
 if worker_num == None:
@@ -47,7 +41,7 @@ b = Blockchain(s)
 
 def worker(start, end):
     try:
-        global s, b, watch_account, db_connection
+        global s, b, db_connection
         print('start from {start} to {end}'.format(start=start, end=end))
         # keep log
         with db_connection.cursor() as cursor:
