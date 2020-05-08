@@ -13,29 +13,29 @@ def run():
         # get steem account
         sql = db.create_account_from_op_sql
         # op_type: claim_account
-        cursor.execute(sql % (1, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
+        cursor.execute(sql % (start_time, now, 1, '%'+'\"creator\": \"steem\"'+'%'))
         claim_num = cursor.fetchone()['num']
 
         # op_type: create_claimed_account
-        cursor.execute(sql % (2, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
+        cursor.execute(sql % (start_time, now, 2, '%'+'\"creator\": \"steem\"'+'%'))
         claim_account_num = cursor.fetchone()['num']
 
         # op_type: account_create
-        cursor.execute(sql % (3, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
+        cursor.execute(sql % (start_time, now, 3, '%'+'\"creator\": \"steem\"'+'%'))
         account_create_num = cursor.fetchone()['num']
 
         # get all accounts
-        sql = create_account_from_op_sql2
+        sql = db.create_account_from_op_sql2
         # op_type: claim_account
-        cursor.execute(sql % (1, start_time, now))
+        cursor.execute(sql % (start_time, now, 1))
         all_claim_num = cursor.fetchone()['num']
 
         # op_type: create_claimed_account
-        cursor.execute(sql % (2, start_time, now))
+        cursor.execute(sql % (start_time, now, 2))
         all_claim_account_num = cursor.fetchone()['num']
 
         # op_type: account_create
-        cursor.execute(sql % (3, start_time, now))
+        cursor.execute(sql % (start_time, now, 3))
         all_account_create_num = cursor.fetchone()['num']
 
     msg = '''-------------

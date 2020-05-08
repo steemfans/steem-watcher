@@ -20,7 +20,7 @@ if mysql_pass == None:
 print('MYSQL_PASS: %s' % (mysql_pass))
 
 insert_op_sql = '''
-INSERT INTO `account_create_log`
+INSERT INTO `op_log`
     (`op_type`, `block_num`, `tx_id`, `op_data`, `created_at`)
 VALUES
     (%s, %s, '%s', '%s', %s)
@@ -28,7 +28,7 @@ VALUES
 
 create_account_from_op_sql = '''
 SELECT count(*) as num
-FROM watcher.op_log
+FROM `op_log`
 WHERE
     created_at >= %s and
     created_at < %s and
@@ -39,7 +39,7 @@ WHERE
 
 create_account_from_op_sql2 = '''
 SELECT count(*) as num
-FROM watcher.account_create_log
+FROM `op_log`
 WHERE
     created_at >= %s and
     created_at < %s and
