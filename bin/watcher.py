@@ -12,6 +12,7 @@ from lib import db
 env_dist = os.environ
 
 # init block config
+print('-------- env params --------')
 steemd_url = env_dist.get('STEEMD')
 if steemd_url == None:
     steemd_url = 'https://api.steemit.com'
@@ -25,13 +26,15 @@ print('WATCH_ACCOUNT: %s' % watch_account)
 worker_num = env_dist.get('WORKER_NUM')
 if worker_num == None:
     worker_num = 5
-print('Worker num: %s' % (worker_num))
+print('WORKER_NUM: %s' % (worker_num))
 worker_num = int(worker_num)
 env_block_num = env_dist.get('BLOCK_NUM')
 if env_block_num == None:
     start_block_num = 0
 else:
     start_block_num = int(env_block_num)
+print('BLOCK_NUM: %s' % env_block_num)
+print('-------- env params --------')
 
 db_connection = None
 

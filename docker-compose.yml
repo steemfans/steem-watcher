@@ -18,13 +18,7 @@ services:
     image: ety001/steem-python:mysql
     volumes:
       - ./bin:/app
-    environment: 
-      - STEEMD=https://s2.61bts.com
-      - WATCH_ACCOUNT=steem
-      - MYSQL_HOST=172.22.2.2
-      - MYSQL_USER=root
-      - MYSQL_PASS=123456
-      - BLOCK_NUM=43191800
+    env_file: .env
     restart: always
     networks:
       steem_watcher_net:
