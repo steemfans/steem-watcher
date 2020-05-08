@@ -1,18 +1,6 @@
 version: '2'
 
 services:
-  watcher_db:
-    container_name: watcher_db
-    image: mariadb:latest
-    restart: always
-    volumes:
-      - ./db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=123456
-    networks:
-      steem_watcher_net:
-        ipv4_address: 172.22.2.2
-  
   watcher:
     container_name: watcher
     image: ety001/steem-python:mysql
@@ -24,6 +12,18 @@ services:
       steem_watcher_net:
         ipv4_address: 172.22.2.3
     command: python3 -u /app/watcher.py
+  
+  watcher_db:
+    container_name: watcher_db
+    image: mariadb:latest
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    networks:
+      steem_watcher_net:
+        ipv4_address: 172.22.2.2
 
 networks:
   steem_watcher_net:
