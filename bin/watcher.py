@@ -93,7 +93,7 @@ def worker(start, end):
         db_connection.commit()
     except:
         print('error: from %s to %s' % (start, end), sys.exc_info())
-        slack.send(':fire: error: from %s to %s' % (start, end))
+        #slack.send(':fire: error: from %s to %s' % (start, end))
 
 def get_start_num_from_db():
     global db_connection
