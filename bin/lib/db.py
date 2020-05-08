@@ -19,6 +19,34 @@ if mysql_pass == None:
     mysql_pass = '123456'
 print('MYSQL_PASS: %s' % (mysql_pass))
 
+insert_op_sql = '''
+INSERT INTO `account_create_log`
+    (`op_type`, `block_num`, `tx_id`, `op_data`, `created_at`)
+VALUES
+    (%s, %s, '%s', '%s', %s)
+'''
+
+create_account_from_op_sql = '''
+SELECT count(*) as num
+FROM watcher.op_log
+WHERE
+    created_at >= %s and
+    created_at < %s and
+    op_type = %s and
+    op_data like '%s'
+    ;
+'''
+
+create_account_from_op_sql2 = '''
+SELECT count(*) as num
+FROM watcher.account_create_log
+WHERE
+    created_at >= %s and
+    created_at < %s and
+    op_type = %s
+    ;
+'''
+
 def connect_db():
     # global mysql_host, mysql_user, mysql_pass
     # Connect to the database
@@ -78,18 +106,16 @@ def create_table():
             cursorclass=pymysql.cursors.DictCursor
         )
         sql1 = '''
-        CREATE TABLE `watcher`.`account_create_log` (
+        CREATE TABLE `watcher`.`op_log` (
             `id` INT NOT NULL AUTO_INCREMENT,
             `op_type` INT NOT NULL,
             `block_num` INT NOT NULL,
-            `creator` VARCHAR(30) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
             `tx_id` VARCHAR(40) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
-            `original_data` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
+            `op_data` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
             `created_at` INT NOT NULL,
             PRIMARY KEY (`id`),
             INDEX `op_type_index` (`op_type`),
-            INDEX `creator_index` (`creator`),
-            INDEX `tx_id_index` (`tx_id`)
+            INDEX `created_at_index` (`created_at`)
         );
         '''
         sql2 = '''

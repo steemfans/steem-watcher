@@ -11,38 +11,21 @@ def run():
     start_time = now - 24 * 3600
     with db_connection.cursor() as cursor:
         # get steem account
-        sql = '''
-            SELECT count(*) as num
-            FROM watcher.account_create_log
-            WHERE
-                op_type = %s and
-                creator = '%s' and
-                created_at >= %s and
-                created_at < %s
-                ;
-        '''
+        sql = db.create_account_from_op_sql
         # op_type: claim_account
-        cursor.execute(sql % (1, 'steem', start_time, now))
+        cursor.execute(sql % (1, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
         claim_num = cursor.fetchone()['num']
 
         # op_type: create_claimed_account
-        cursor.execute(sql % (2, 'steem', start_time, now))
+        cursor.execute(sql % (2, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
         claim_account_num = cursor.fetchone()['num']
 
         # op_type: account_create
-        cursor.execute(sql % (3, 'steem', start_time, now))
+        cursor.execute(sql % (3, '%'+'\"creator\": \"steem\"'+'%', start_time, now))
         account_create_num = cursor.fetchone()['num']
 
         # get all accounts
-        sql = '''
-            SELECT count(*) as num
-            FROM watcher.account_create_log
-            WHERE
-                op_type = %s and
-                created_at >= %s and
-                created_at < %s
-                ;
-        '''
+        sql = create_account_from_op_sql2
         # op_type: claim_account
         cursor.execute(sql % (1, start_time, now))
         all_claim_num = cursor.fetchone()['num']

@@ -59,7 +59,7 @@ def worker(start, end):
         # get block
         block_infos = s.get_blocks(range(start, end+1))
         # print(block_infos)
-        sql = "INSERT INTO `account_create_log` (`op_type`, `block_num`, `creator`, `tx_id`, `original_data`, `created_at`) VALUES (%s, %s, '%s', '%s', %s)"
+        sql = db.insert_op_sql
         for block_info in block_infos:
             timestamp = int(time.mktime(time.strptime(block_info['timestamp'], "%Y-%m-%dT%H:%M:%S")))
             block_num = block_info['block_num']
@@ -70,7 +70,12 @@ def worker(start, end):
                 for op in operations:
                     if op[0] in opType.watchingTypes.keys():
                         with db_connection.cursor() as cursor:
-                            cursor.execute(sql % (opType.watchingTypes[op[0]], block_num, op[1]['creator'], trans['transaction_id'], json.dumps(op), timestamp))
+                            cursor.execute(sql % (
+                                opType.watchingTypes[op[0]],
+                                block_num,
+                                trans['transaction_id'],
+                                json.dumps(op),
+                                timestamp))
                         db_connection.commit()
         # keep log
         with db_connection.cursor() as cursor:
