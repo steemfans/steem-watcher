@@ -84,15 +84,18 @@ def create_table():
             `block_num` INT NOT NULL,
             `creator` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
             `original_data` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
-            `timestamp` INT NOT NULL,
+            `created_at` INT NOT NULL,
             PRIMARY KEY (`id`),
-            INDEX `op_type_index` (`op_type`));
+            INDEX `op_type_index` (`op_type`),
+            INDEX `creator_index` (`creator`)
+        );
         '''
         sql2 = '''
         CREATE TABLE `watcher`.`task_log` (
             `block_num` INT NOT NULL,
             `status` INT NOT NULL,
-            PRIMARY KEY (`block_num`));
+            PRIMARY KEY (`block_num`)
+        );
         '''
         try:
             with connection.cursor() as cursor:
