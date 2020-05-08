@@ -38,14 +38,40 @@ def run():
         cursor.execute(sql % (start_time, now, 3))
         all_account_create_num = cursor.fetchone()['num']
 
-    msg = '''-------------
-过去24小时用户注册数量汇总：
+        # order accounts
+        sql = db.create_account_order_sql
+        # op_type: claim_account
+        cursor.execute(sql % (start_time, now, 1))
+        claim_account_order_list = cursor.fetchall()
+    
+    number_icons = {
+        1: ":one:",
+        2: ":two:",
+        3: ":three:",
+        4: ":four:",
+        5: ":five:",
+    }
+
+    order_list = []
+    i = 1
+    for o in claim_account_order_list:
+        op_detail = json.loads(o['op_data'])
+        order_list.append("%s %s               %s" % (number_icons[i], op_detail[1]['creator'], o['total']))
+        i = i + 1
+
+    msg = ''':evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree:
+:earth_asia: 过去24小时用户注册数量汇总：
+
 <https://steemd.com/@steem|@steem> 申请牌子数量：        %s
 <https://steemd.com/@steem|@steem> 使用牌子数量：        %s
 <https://steemd.com/@steem|@steem> 使用steem注册用户数量：%s
 申请牌子总量：         %s
 使用牌子总量：         %s
 使用steem注册用户数量： %s
+
+:gem: 过去24小时申请牌子排名前5：
+
+%s
 '''
 
     slack.send(msg % (
@@ -54,7 +80,9 @@ def run():
         account_create_num,
         all_claim_num,
         all_claim_account_num,
-        all_account_create_num))
+        all_account_create_num,
+        "\n".join(order_list)
+        ))
     print('send success')
     db_connection.close()
 

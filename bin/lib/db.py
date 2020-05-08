@@ -47,6 +47,21 @@ WHERE
     ;
 '''
 
+create_account_order_sql = '''
+SELECT
+    count(*) as total,
+    op_data
+FROM
+    watcher.op_log
+WHERE
+    created_at >= %s and
+    created_at <= %s and
+    op_type = %s
+GROUP BY op_data
+ORDER BY total DESC
+LIMIT 5;
+'''
+
 def connect_db():
     # global mysql_host, mysql_user, mysql_pass
     # Connect to the database
