@@ -31,6 +31,7 @@ services:
     volumes:
       - ./bin:/app
       - ./config/crontab:/etc/crontabs/root
+      - ./logs:/var/log
     env_file: .env
     restart: always
     networks:

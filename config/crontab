@@ -1,1 +1,2 @@
-* * * * * /app/analytics.py
+0 0 * * * /app/analytics.py >> /var/log/analytics.log 2>&1
+0 * * * * flock -xn /tmp/unfinish_task.lock -c '/app/collect_unfinish_task.py >> /var/log/unfinish_task.log 2>&1'
