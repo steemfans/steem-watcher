@@ -82,12 +82,14 @@ def create_table():
             `id` INT NOT NULL AUTO_INCREMENT,
             `op_type` INT NOT NULL,
             `block_num` INT NOT NULL,
-            `creator` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
+            `creator` VARCHAR(30) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
+            `tx_id` VARCHAR(40) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
             `original_data` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci' NOT NULL,
             `created_at` INT NOT NULL,
             PRIMARY KEY (`id`),
             INDEX `op_type_index` (`op_type`),
-            INDEX `creator_index` (`creator`)
+            INDEX `creator_index` (`creator`),
+            INDEX `tx_id_index` (`tx_id`)
         );
         '''
         sql2 = '''
