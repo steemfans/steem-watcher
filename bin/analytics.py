@@ -1,13 +1,15 @@
 #!/usr/bin/python3 -u
 #encoding:UTF-8
-import json, os, sys, time
+import json, os, sys, time, datetime
 from contextlib import suppress
 from lib import slack
 from lib import db
 
 def run():
     db_connection = db.connect_db()
-    now = int(time.time())
+    today = datetime.date.today()
+    timeArray = time.strptime(str(today), "%Y-%m-%d")
+    now = int(time.mktime(timeArray))
     start_time = now - 24 * 3600
     with db_connection.cursor() as cursor:
         # get steem account
