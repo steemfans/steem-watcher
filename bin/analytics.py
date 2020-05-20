@@ -3,6 +3,7 @@
 import json, os, sys, time, datetime
 from contextlib import suppress
 from lib import slack
+from lib import api
 from lib import db
 
 def run():
@@ -81,6 +82,13 @@ def run():
 
 %s
 '''
+
+    api.send('6', claim_num, str(today))
+    api.send('7', claim_account_num, str(today))
+    api.send('8', account_create_num, str(today))
+    api.send('9', all_claim_num, str(today))
+    api.send('10', all_claim_account_num, str(today))
+    api.send('11', all_account_create_num, str(today))
 
     slack.send(msg % (
         claim_num,
