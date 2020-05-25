@@ -1,13 +1,14 @@
 #encoding:UTF-8
 import json, os, sys, time
 from urllib.request import Request, urlopen
+from . import log
 
 env_dist = os.environ
 slack_url = env_dist.get('SLACK_URL')
 
 def send(msg):
     if slack_url == None:
-        print("\n-------Has not config SLACK_URL.-------\n")
+        log.output("-------Has not config SLACK_URL.-------")
         return
     message = {
         "text": msg
@@ -17,5 +18,5 @@ def send(msg):
         response = urlopen(req)
         response.read()
     except:
-        print('slack_msg_send_error:', sys.exc_info())
+        log.output("slack_msg_send_error: %s" % str(sys.exc_info()))
     

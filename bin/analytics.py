@@ -5,6 +5,7 @@ from contextlib import suppress
 from lib import slack
 from lib import api
 from lib import db
+from lib import log
 
 def run():
     db_connection = db.connect_db()
@@ -12,6 +13,7 @@ def run():
     timeArray = time.strptime(str(today), "%Y-%m-%d")
     now = int(time.mktime(timeArray))
     start_time = now - 24 * 3600
+    start_time_str = datetime.datetime.utcfromtimestamp(start_time).strftime("%Y-%m-%d")
     with db_connection.cursor() as cursor:
         # get steem account
         sql = db.create_account_from_op_sql
@@ -83,12 +85,12 @@ def run():
 %s
 '''
 
-    api.send('6', claim_num, str(today))
-    api.send('7', claim_account_num, str(today))
-    api.send('8', account_create_num, str(today))
-    api.send('9', all_claim_num, str(today))
-    api.send('10', all_claim_account_num, str(today))
-    api.send('11', all_account_create_num, str(today))
+    api.send('6', claim_num, start_time_str)
+    api.send('7', claim_account_num, start_time_str)
+    api.send('8', account_create_num, start_time_str)
+    api.send('9', all_claim_num, start_time_str)
+    api.send('10', all_claim_account_num, start_time_str)
+    api.send('11', all_account_create_num, start_time_str)
 
     slack.send(msg % (
         claim_num,
@@ -99,7 +101,7 @@ def run():
         all_account_create_num,
         "\n".join(order_list)
         ))
-    print('send success')
+    log.output('send success')
     db_connection.close()
 
 if __name__ == '__main__':

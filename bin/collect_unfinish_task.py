@@ -7,6 +7,7 @@ from steem.steemd import Steemd
 from lib import slack
 from lib import db
 from lib import opType
+from lib import log
 import traceback
 
 env_dist = os.environ
