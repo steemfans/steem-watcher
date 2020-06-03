@@ -6,6 +6,7 @@ from . import log
 env_dist = os.environ
 analytics_api_url = env_dist.get('ANALYTICS_API')
 superkey = env_dist.get('SUPERKEY')
+report_url = env_dist.get('REPORT_URL')
 
 def send(event_id, total, date):
     if analytics_api_url == None:
@@ -22,5 +23,18 @@ def send(event_id, total, date):
         log.output(response.read())
     except:
         log.output('analytics_msg_send_error: %s' % str(sys.exc_info()))
+    finally:
+        return
+
+def report():
+    if report_url == None:
+        log.output("-------Has not config REPORT_URL.-------")
+        return
+    try:
+        req = Request(report_url)
+        response = urlopen(req)
+        log.output(response.read())
+    except:
+        log.output('report_url_msg_send_error: %s' % str(sys.exc_info()))
     finally:
         return

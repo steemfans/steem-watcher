@@ -1,0 +1,17 @@
+FROM ety001/steem-python:mysql
+
+WORKDIR /app
+
+ADD ./bin /app
+
+ENV STEEMD https://api.steemit.com
+ENV MYSQL_HOST 172.22.2.2
+ENV MYSQL_USER root
+ENV MYSQL_PASS 123456
+ENV BLOCK_NUM 43191800
+ENV SUPERKEY abc
+#ENV SLACK_URL https://xxx
+#ENV ANALYTICS_API https://xxxx
+#ENV REPORT_URL http://xxxxx
+
+CMD "python3 -u /app/watcher.py"

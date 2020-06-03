@@ -85,6 +85,7 @@ def run():
 %s
 '''
 
+    # send data to faucet analytics api
     api.send('6', claim_num, start_time_str)
     api.send('7', claim_account_num, start_time_str)
     api.send('8', account_create_num, start_time_str)
@@ -92,6 +93,10 @@ def run():
     api.send('10', all_claim_account_num, start_time_str)
     api.send('11', all_account_create_num, start_time_str)
 
+    # trigger report action
+    api.report()
+
+    # send data to slack
     slack.send(msg % (
         claim_num,
         claim_account_num,
