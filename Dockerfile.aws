@@ -3,6 +3,7 @@ FROM ety001/steem-python:mysql
 WORKDIR /app
 
 ADD ./bin /app
+COPY config/crontab /etc/crontabs/root
 
 ENV STEEMD https://api.steemit.com
 ENV MYSQL_HOST 172.22.2.2
@@ -14,4 +15,4 @@ ENV SUPERKEY abc
 #ENV ANALYTICS_API https://xxxx
 #ENV REPORT_URL http://xxxxx
 
-CMD "python3 -u /app/watcher.py"
+CMD "crond -b -L /dev/stdout && python3 -u /app/watcher.py"
