@@ -7,6 +7,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build -t ety001/steem-watcher -f Dockerfile.aws .
+      - run: |
+         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      - run: docker push ety001/steem-watcher
 workflows:
   version: 2
   build:
