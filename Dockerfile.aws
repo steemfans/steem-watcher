@@ -15,4 +15,4 @@ ENV SUPERKEY abc
 #ENV ANALYTICS_API https://xxxx
 #ENV REPORT_URL http://xxxxx
 
-CMD "crond -b -L /dev/stdout && python3 -u /app/watcher.py"
+CMD "/usr/sbin/crond -b -L /dev/stdout && /usr/bin/python3 -u /app/watcher.py"

@@ -6,10 +6,12 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build -t ety001/steem-watcher -f Dockerfile.aws .
+      - run: docker build -t ety001/steem-watcher:$CIRCLE_BRANCH -f Dockerfile.aws .
       - run: |
          echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-      - run: docker push ety001/steem-watcher
+      - run: docker push ety001/steem-watcher:$CIRCLE_BRANCH
+      - run: docker tag ety001/steem-watcher:$CIRCLE_BRANCH ety001/steem-watcher:latest
+      - run: docker push ety001/steem-watcher:latest
 workflows:
   version: 2
   build:
