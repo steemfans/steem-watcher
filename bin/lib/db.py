@@ -20,6 +20,11 @@ if mysql_pass == None:
     mysql_pass = '123456'
 log.output('MYSQL_PASS: %s' % (mysql_pass))
 
+mysql_db = env_dist.get('MYSQL_DB')
+if mysql_db == None:
+    mysql_db = 'watcher'
+log.output('MYSQL_DB: %s' % (mysql_db))
+
 insert_op_sql = '''
 INSERT INTO `op_log`
     (`op_type`, `block_num`, `tx_id`, `op_data`, `created_at`)
@@ -53,7 +58,7 @@ SELECT
     count(*) as total,
     op_data
 FROM
-    watcher.op_log
+    `op_log`
 WHERE
     created_at >= %s and
     created_at <= %s and
@@ -72,7 +77,7 @@ def connect_db():
             host=mysql_host,
             user=mysql_user,
             password=mysql_pass,
-            db='watcher',
+            db=mysql_db,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -95,7 +100,7 @@ def create_db():
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
-        sql = "CREATE DATABASE watcher";
+        sql = "CREATE DATABASE %s" % mysql_db;
         try:
             with connection.cursor() as cursor:
                 cursor.execute(sql)
@@ -117,12 +122,12 @@ def create_table():
             host=mysql_host,
             user=mysql_user,
             password=mysql_pass,
-            db='watcher',
+            db=mysql_db,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
         sql1 = '''
-        CREATE TABLE `watcher`.`op_log` (
+        CREATE TABLE `%s`.`op_log` (
             `id` INT NOT NULL AUTO_INCREMENT,
             `op_type` INT NOT NULL,
             `block_num` INT NOT NULL,
@@ -133,14 +138,14 @@ def create_table():
             INDEX `op_type_index` (`op_type`),
             INDEX `created_at_index` (`created_at`)
         );
-        '''
+        ''' % mysql_db
         sql2 = '''
-        CREATE TABLE `watcher`.`task_log` (
+        CREATE TABLE `%s`.`task_log` (
             `block_num` INT NOT NULL,
             `status` INT NOT NULL,
             PRIMARY KEY (`block_num`)
         );
-        '''
+        ''' % mysql_db
         try:
             with connection.cursor() as cursor:
                 cursor.execute(sql1)

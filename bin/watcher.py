@@ -76,7 +76,7 @@ def worker(start, end):
                                 trans['transaction_id'],
                                 json.dumps(op),
                                 timestamp))
-                        db_connection.commit()
+                        #db_connection.commit()
         # keep log
         with db_connection.cursor() as cursor:
             sql = "UPDATE `task_log` SET `status` = 1 where `block_num` >= %s and `block_num` <= %s" % (start, end)
