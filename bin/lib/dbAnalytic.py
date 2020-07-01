@@ -5,28 +5,44 @@ from . import log
 
 # init db params
 env_dist = os.environ
-mysql_host = env_dist.get('ANALYTICS_MYSQL_HOST')
-if mysql_host == None or mysql_host == "":
-    log.output('need ANALYTICS_MYSQL_HOST')
-    sys.exit()
+mysql_config = env_dist.get('ANALYTICS_MYSQL_CONFIG')
+if mysql_config == None or mysql_config == "":
+    mysql_host = env_dist.get('ANALYTICS_MYSQL_HOST')
+    if mysql_host == None or mysql_host == "":
+        mysql_host = '172.22.2.2'
+    
+    mysql_port = env_dist.get('ANALYTICS_MYSQL_PORT')
+    if mysql_port == None or mysql_port == "":
+        mysql_port = 3306
+
+    mysql_user = env_dist.get('ANALYTICS_MYSQL_USER')
+    if mysql_user == None or mysql_user == "":
+        mysql_user = 'root'
+
+    mysql_pass = env_dist.get('ANALYTICS_MYSQL_PASS')
+    if mysql_pass == None or mysql_pass == "":
+        mysql_pass = '123456'
+
+    mysql_db = env_dist.get('ANALYTICS_MYSQL_DB')
+    if mysql_db == None or mysql_db == "":
+        mysql_db = 'faucet'
+
+else:
+    try:
+        matches = re.match(r'mysql://(\w+):(\w+)@(\w+):(\d+)/(\w+)', mysql_config, re.I)
+        mysql_host = matches[3]
+        mysql_user = matches[1]
+        mysql_pass = matches[2]
+        mysql_port = matches[4]
+        mysql_db = matches[5]
+    except:
+        log.output('ANALYTICS_MYSQL_CONFIG is error.')
+        sys.exit()
+
 log.output('ANALYTICS_MYSQL_HOST: %s' % (mysql_host))
-
-mysql_user = env_dist.get('ANALYTICS_MYSQL_USER')
-if mysql_user == None or mysql_user == "":
-    log.output('need ANALYTICS_MYSQL_USER')
-    sys.exit()
+log.output('ANALYTICS_MYSQL_PORT: %s' % (mysql_port))
 log.output('ANALYTICS_MYSQL_USER: %s' % (mysql_user))
-
-mysql_pass = env_dist.get('ANALYTICS_MYSQL_PASS')
-if mysql_pass == None or mysql_pass == "":
-    log.output('need ANALYTICS_MYSQL_PASS')
-    sys.exit()
 log.output('ANALYTICS_MYSQL_PASS: %s' % (mysql_pass))
-
-mysql_db = env_dist.get('ANALYTICS_MYSQL_DB')
-if mysql_db == None or mysql_db == "":
-    log.output('need ANALYTICS_MYSQL_DB')
-    sys.exit()
 log.output('ANALYTICS_MYSQL_DB: %s' % (mysql_db))
 
 mysql_table = env_dist.get('ANALYTICS_MYSQL_TABLE')
@@ -35,6 +51,7 @@ if mysql_table == None or mysql_table == "":
     sys.exit()
 log.output('ANALYTICS_MYSQL_TABLE: %s' % (mysql_table))
 
+
 def connect_db():
     # global mysql_host, mysql_user, mysql_pass
     # Connect to the database
@@ -42,6 +59,7 @@ def connect_db():
         log.output('connecting analytic mysql db ......')
         conn = pymysql.connect(
             host=mysql_host,
+            port=mysql_port,
             user=mysql_user,
             password=mysql_pass,
             db=mysql_db,

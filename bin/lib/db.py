@@ -1,28 +1,48 @@
 #encoding:UTF-8
-import json, os, sys, time
+import json, os, sys, time, re
 import pymysql
 from . import log
 
 # init db params
 env_dist = os.environ
-mysql_host = env_dist.get('MYSQL_HOST')
-if mysql_host == None or mysql_host == "":
-    mysql_host = '172.22.2.2'
+mysql_config = env_dist.get('MYSQL_CONFIG')
+if mysql_config == None or mysql_config == "":
+    mysql_host = env_dist.get('MYSQL_HOST')
+    if mysql_host == None or mysql_host == "":
+        mysql_host = '172.22.2.2'
+    
+    mysql_port = env_dist.get('MYSQL_PORT')
+    if mysql_port == None or mysql_port == "":
+        mysql_port = 3306
+
+    mysql_user = env_dist.get('MYSQL_USER')
+    if mysql_user == None or mysql_user == "":
+        mysql_user = 'root'
+
+    mysql_pass = env_dist.get('MYSQL_PASS')
+    if mysql_pass == None or mysql_pass == "":
+        mysql_pass = '123456'
+
+    mysql_db = env_dist.get('MYSQL_DB')
+    if mysql_db == None or mysql_db == "":
+        mysql_db = 'watcher'
+
+else:
+    try:
+        matches = re.match(r'mysql://(\w+):(\w+)@(\w+):(\d+)/(\w+)', mysql_config, re.I)
+        mysql_host = matches[3]
+        mysql_user = matches[1]
+        mysql_pass = matches[2]
+        mysql_port = matches[4]
+        mysql_db = matches[5]
+    except:
+        log.output('MYSQL_CONFIG is error.')
+        sys.exit()
+
 log.output('MYSQL_HOST: %s' % (mysql_host))
-
-mysql_user = env_dist.get('MYSQL_USER')
-if mysql_user == None or mysql_user == "":
-    mysql_user = 'root'
+log.output('MYSQL_PORT: %s' % (mysql_port))
 log.output('MYSQL_USER: %s' % (mysql_user))
-
-mysql_pass = env_dist.get('MYSQL_PASS')
-if mysql_pass == None or mysql_pass == "":
-    mysql_pass = '123456'
 log.output('MYSQL_PASS: %s' % (mysql_pass))
-
-mysql_db = env_dist.get('MYSQL_DB')
-if mysql_db == None or mysql_db == "":
-    mysql_db = 'watcher'
 log.output('MYSQL_DB: %s' % (mysql_db))
 
 insert_op_sql = '''
@@ -75,6 +95,7 @@ def connect_db():
         log.output('connecting mysql db ......')
         conn = pymysql.connect(
             host=mysql_host,
+            port=mysql_port,
             user=mysql_user,
             password=mysql_pass,
             db=mysql_db,
@@ -95,6 +116,7 @@ def create_db():
     try:
         connection = pymysql.connect(
             host=mysql_host,
+            port=mysql_port,
             user=mysql_user,
             password=mysql_pass,
             charset='utf8mb4',
@@ -120,6 +142,7 @@ def create_table():
     try:
         connection = pymysql.connect(
             host=mysql_host,
+            port=mysql_port,
             user=mysql_user,
             password=mysql_pass,
             db=mysql_db,
