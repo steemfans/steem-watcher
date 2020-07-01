@@ -1,5 +1,5 @@
 #encoding:UTF-8
-import json, os, sys, time
+import json, os, sys, time, re
 import pymysql
 from . import log
 
