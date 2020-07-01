@@ -33,7 +33,7 @@ else:
         mysql_host = matches[3]
         mysql_user = matches[1]
         mysql_pass = matches[2]
-        mysql_port = matches[4]
+        mysql_port = int(matches[4])
         mysql_db = matches[5]
     except:
         log.output('MYSQL_CONFIG is error.')
