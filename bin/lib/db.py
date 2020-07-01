@@ -29,7 +29,7 @@ if mysql_config == None or mysql_config == "":
 
 else:
     try:
-        matches = re.match(r'mysql://(\w+):(\w+)@(\w+):(\d+)/(\w+)', mysql_config, re.I)
+        matches = re.match(r'mysql://(\S+):(\S+)@(\S+):(\d+)/(\S+)', mysql_config, re.I)
         mysql_host = matches[3]
         mysql_user = matches[1]
         mysql_pass = matches[2]
