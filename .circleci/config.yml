@@ -7,11 +7,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build -t steemit/steem-watcher:$CIRCLE_BRANCH -f Dockerfile.aws .
-      - run: |
-         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-      - run: docker push steemit/steem-watcher:$CIRCLE_BRANCH
-      - run: docker tag steemit/steem-watcher:$CIRCLE_BRANCH steemit/steem-watcher:latest
-      - run: docker push steemit/steem-watcher:latest
+      #- run: |
+      #   echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      #- run: docker push steemit/steem-watcher:$CIRCLE_BRANCH
+      #- run: docker tag steemit/steem-watcher:$CIRCLE_BRANCH steemit/steem-watcher:latest
+      #- run: docker push steemit/steem-watcher:latest
 workflows:
   version: 2
   build:
