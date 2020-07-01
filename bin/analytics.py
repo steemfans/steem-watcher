@@ -5,10 +5,12 @@ from contextlib import suppress
 from lib import slack
 from lib import api
 from lib import db
+from lib import dbAnalytic
 from lib import log
 
 def run():
     db_connection = db.connect_db()
+    analytic_db_connection = dbAnalytic.connect_db()
     today = datetime.date.today()
     timeArray = time.strptime(str(today), "%Y-%m-%d")
     now = int(time.mktime(timeArray))
@@ -85,6 +87,23 @@ def run():
 %s
 '''
 
+    time_tuple = time.strptime(start_time_str, "%Y-%m-%d")
+    created_at = datetime.datetime(
+        time_tuple.tm_year,
+        time_tuple.tm_mon,
+        time_tuple.tm_mday,
+        time_tuple.tm_hour,
+        time_tuple.tm_min,
+        time_tuple.tm_sec)
+    dbAnalytic.insert_data(analytic_db_connection ,[
+        "(%s, %s, '%s')" % (6, claim_num, created_at),
+        "(%s, %s, '%s')" % (7, claim_account_num, created_at),
+        "(%s, %s, '%s')" % (8, account_create_num, created_at),
+        "(%s, %s, '%s')" % (9, all_claim_num, created_at),
+        "(%s, %s, '%s')" % (10, all_claim_account_num, created_at),
+        "(%s, %s, '%s')" % (11, all_account_create_num, created_at),
+    ])
+
     # send data to faucet analytics api
     api.send('6', claim_num, start_time_str)
     api.send('7', claim_account_num, start_time_str)
@@ -108,6 +127,7 @@ def run():
         ))
     log.output('send success')
     db_connection.close()
+    analytic_db_connection.close()
 
 if __name__ == '__main__':
     with suppress(KeyboardInterrupt):
