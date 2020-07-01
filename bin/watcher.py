@@ -15,17 +15,17 @@ env_dist = os.environ
 # init block config
 print('-------- env params --------')
 steemd_url = env_dist.get('STEEMD')
-if steemd_url == None:
+if steemd_url == None or steemd_url == "":
     steemd_url = 'https://api.steemit.com'
 print('STEEMD: %s' % steemd_url)
 
 worker_num = env_dist.get('WORKER_NUM')
-if worker_num == None:
+if worker_num == None or worker_num == "":
     worker_num = 5
 print('WORKER_NUM: %s' % (worker_num))
 worker_num = int(worker_num)
 env_block_num = env_dist.get('BLOCK_NUM')
-if env_block_num == None:
+if env_block_num == None or env_block_num == "":
     start_block_num = 0
 else:
     start_block_num = int(env_block_num)
@@ -76,7 +76,7 @@ def worker(start, end):
                                 trans['transaction_id'],
                                 json.dumps(op),
                                 timestamp))
-                        db_connection.commit()
+                        #db_connection.commit()
         # keep log
         with db_connection.cursor() as cursor:
             sql = "UPDATE `task_log` SET `status` = 1 where `block_num` >= %s and `block_num` <= %s" % (start, end)

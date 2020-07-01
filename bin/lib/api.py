@@ -9,10 +9,10 @@ superkey = env_dist.get('SUPERKEY')
 report_url = env_dist.get('REPORT_URL')
 
 def send(event_id, total, date):
-    if analytics_api_url == None:
+    if analytics_api_url == None or analytics_api_url == "":
         log.output("-------Has not config ANALYTICS_API.-------")
         return
-    if superkey == None:
+    if superkey == None or superkey == "":
         log.output("-------Has not config SUPERKEY.-------")
         return
     final_url = analytics_api_url + "?event_id=%s&superkey=%s&total=%s&t=%s" % (event_id, superkey, total, date)
@@ -27,7 +27,7 @@ def send(event_id, total, date):
         return
 
 def report():
-    if report_url == None:
+    if report_url == None or report_url == "":
         log.output("-------Has not config REPORT_URL.-------")
         return
     try:

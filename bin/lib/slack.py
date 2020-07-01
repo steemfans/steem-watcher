@@ -7,7 +7,7 @@ env_dist = os.environ
 slack_url = env_dist.get('SLACK_URL')
 
 def send(msg):
-    if slack_url == None:
+    if slack_url == None or slack_url == "":
         log.output("-------Has not config SLACK_URL.-------")
         return
     message = {

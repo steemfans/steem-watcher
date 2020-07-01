@@ -6,19 +6,24 @@ from . import log
 # init db params
 env_dist = os.environ
 mysql_host = env_dist.get('MYSQL_HOST')
-if mysql_host == None:
+if mysql_host == None or mysql_host == "":
     mysql_host = '172.22.2.2'
 log.output('MYSQL_HOST: %s' % (mysql_host))
 
 mysql_user = env_dist.get('MYSQL_USER')
-if mysql_user == None:
+if mysql_user == None or mysql_user == "":
     mysql_user = 'root'
 log.output('MYSQL_USER: %s' % (mysql_user))
 
 mysql_pass = env_dist.get('MYSQL_PASS')
-if mysql_pass == None:
+if mysql_pass == None or mysql_pass == "":
     mysql_pass = '123456'
 log.output('MYSQL_PASS: %s' % (mysql_pass))
+
+mysql_db = env_dist.get('MYSQL_DB')
+if mysql_db == None or mysql_db == "":
+    mysql_db = 'watcher'
+log.output('MYSQL_DB: %s' % (mysql_db))
 
 insert_op_sql = '''
 INSERT INTO `op_log`
@@ -53,7 +58,7 @@ SELECT
     count(*) as total,
     op_data
 FROM
-    watcher.op_log
+    `op_log`
 WHERE
     created_at >= %s and
     created_at <= %s and
@@ -72,7 +77,7 @@ def connect_db():
             host=mysql_host,
             user=mysql_user,
             password=mysql_pass,
-            db='watcher',
+            db=mysql_db,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -95,7 +100,7 @@ def create_db():
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
-        sql = "CREATE DATABASE watcher";
+        sql = "CREATE DATABASE %s" % mysql_db;
         try:
             with connection.cursor() as cursor:
                 cursor.execute(sql)
@@ -117,12 +122,12 @@ def create_table():
             host=mysql_host,
             user=mysql_user,
             password=mysql_pass,
-            db='watcher',
+            db=mysql_db,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
         sql1 = '''
-        CREATE TABLE `watcher`.`op_log` (
+        CREATE TABLE `%s`.`op_log` (
             `id` INT NOT NULL AUTO_INCREMENT,
             `op_type` INT NOT NULL,
             `block_num` INT NOT NULL,
@@ -133,14 +138,14 @@ def create_table():
             INDEX `op_type_index` (`op_type`),
             INDEX `created_at_index` (`created_at`)
         );
-        '''
+        ''' % mysql_db
         sql2 = '''
-        CREATE TABLE `watcher`.`task_log` (
+        CREATE TABLE `%s`.`task_log` (
             `block_num` INT NOT NULL,
             `status` INT NOT NULL,
             PRIMARY KEY (`block_num`)
         );
-        '''
+        ''' % mysql_db
         try:
             with connection.cursor() as cursor:
                 cursor.execute(sql1)
