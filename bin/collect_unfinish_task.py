@@ -52,7 +52,7 @@ def worker(block_num_list):
                                 trans['transaction_id'],
                                 json.dumps(op),
                                 timestamp))
-                        db_connection.commit()
+                        #db_connection.commit()
         # keep log
         with db_connection.cursor() as cursor:
             block_num_str = ','.join(str(num) for num in block_num_list)
@@ -70,13 +70,13 @@ def run():
     try:
         with db_connection.cursor() as cursor:
             # get lastest block num
-            sql = 'SELECT block_num FROM watcher.task_log ORDER BY block_num DESC limit 1'
+            sql = 'SELECT block_num FROM task_log ORDER BY block_num DESC limit 1'
             cursor.execute(sql)
             lastest_block_num = int(cursor.fetchone()['block_num'])
             # get unfinished tasks
             sql = '''
                 SELECT block_num
-                FROM watcher.task_log
+                FROM task_log
                 WHERE
                     block_num < (%s-500) and
                     status = 0
