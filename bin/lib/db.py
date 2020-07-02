@@ -5,7 +5,13 @@ from . import log
 
 # init db params
 env_dist = os.environ
-mysql_config = env_dist.get('MYSQL_CONFIG')
+# add CONNECT_STRING env support
+connect_string = env_dist.get('CONNECT_STRING')
+if connect_string == None or connect_string == "":
+    mysql_config = env_dist.get('MYSQL_CONFIG')
+else:
+    mysql_config = connect_string
+
 if mysql_config == None or mysql_config == "":
     mysql_host = env_dist.get('MYSQL_HOST')
     if mysql_host == None or mysql_host == "":
