@@ -1,19 +1,28 @@
 version: 2
 jobs:
-  build:
+  build-main:
     docker:
       - image: docker:17
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build -t steemit/steem-watcher:$CIRCLE_BRANCH -f Dockerfile.aws .
-      #- run: |
-      #   echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-      #- run: docker push steemit/steem-watcher:$CIRCLE_BRANCH
-      #- run: docker tag steemit/steem-watcher:$CIRCLE_BRANCH steemit/steem-watcher:latest
-      #- run: docker push steemit/steem-watcher:latest
+      - run: docker build -t steemit/steem-watcher:main -f Dockerfile.aws.main .
+      - run: |
+         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      - run: docker push steemit/steem-watcher:main
+  build-crond:
+    docker:
+      - image: docker:17
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t steemit/steem-watcher:crond-$CIRCLE_BRANCH -f Dockerfile.aws.crond .
+      - run: |
+         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      - run: docker push steemit/steem-watcher:crond
 workflows:
   version: 2
   build:
     jobs:
-      - build
+      - build-main
+      - build-crond

@@ -17,4 +17,4 @@ RUN chown root:root /etc/crontabs/root && chmod 600 /etc/crontabs/root
 #ENV ANALYTICS_API https://xxxx
 #ENV REPORT_URL http://xxxxx
 
-CMD "python3 -V"
+CMD "/app/run_crond.sh"
