@@ -13,7 +13,12 @@ def send(msg):
     message = {
         "content": msg
     }
-    req = Request(discord_url, json.dumps(message).encode('utf-8'))
+    req = Request(discord_url,
+        data=json.dumps(message).encode('utf-8'),
+        headers={
+            'content-type': 'application/json',
+            'User-Agent': 'SteemWatcher'
+            })
     try:
         response = urlopen(req)
         response.read()
