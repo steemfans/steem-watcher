@@ -15,7 +15,7 @@ services:
   
   watcher_db:
     container_name: watcher_db
-    image: mysql:latest
+    image: mariadb:latest
     restart: always
     volumes:
       - ./db:/var/lib/mysql
