@@ -43,7 +43,8 @@ else:
         mysql_db = matches[5]
     except:
         log.output('ANALYTICS_MYSQL_CONFIG is error.')
-        sys.exit()
+        #sys.exit()
+        return
 
 log.output('ANALYTICS_MYSQL_HOST: %s' % (mysql_host))
 log.output('ANALYTICS_MYSQL_PORT: %s' % (mysql_port))
@@ -54,7 +55,8 @@ log.output('ANALYTICS_MYSQL_DB: %s' % (mysql_db))
 mysql_table = env_dist.get('ANALYTICS_MYSQL_TABLE')
 if mysql_table == None or mysql_table == "":
     log.output('need ANALYTICS_MYSQL_TABLE')
-    sys.exit()
+    return
+    #sys.exit()
 log.output('ANALYTICS_MYSQL_TABLE: %s' % (mysql_table))
 
 
@@ -76,10 +78,12 @@ def connect_db():
             return conn
         else:
             log.output('analytic mysql connect error:')
-            sys.exit()
+            return
+            #sys.exit()
     except:
         log.output('analytic mysql is not ready.')
-        sys.exit()
+        return
+        #sys.exit()
 
 def insert_data(db_connection, data):
     with db_connection.cursor() as cursor:
@@ -88,6 +92,3 @@ def insert_data(db_connection, data):
         cursor.execute(insert_sql)
     db_connection.commit()
     log.output('analytic data insert success.')
-
-    
-
