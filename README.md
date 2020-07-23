@@ -11,7 +11,7 @@
 ## 克隆代码
 
 ```
-git clone https://github.com/ety001/steem-watcher.git
+git clone https://github.com/steemfans/steem-watcher.git
 ```
 
 ## 修改配置参数
