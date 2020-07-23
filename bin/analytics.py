@@ -2,7 +2,7 @@
 #encoding:UTF-8
 import json, os, sys, time, datetime
 from contextlib import suppress
-from lib import slack
+from lib import slack, discord
 from lib import api
 from lib import db
 from lib import dbAnalytic
@@ -125,7 +125,18 @@ def run():
         all_account_create_num,
         "\n".join(order_list)
         ))
-    log.output('send success')
+    log.output('send slack success')
+    # send data to discord
+    discord.send(msg % (
+        claim_num,
+        claim_account_num,
+        account_create_num,
+        all_claim_num,
+        all_claim_account_num,
+        all_account_create_num,
+        "\n".join(order_list)
+        ))
+    log.output('send discord success')
     db_connection.close()
     analytic_db_connection.close()
 
