@@ -68,16 +68,16 @@ def run():
     i = 1
     for o in claim_account_order_list:
         op_detail = json.loads(o['op_data'])
-        creator = "<https://steemd.com/@%s|@%s>" % (op_detail[1]['creator'], op_detail[1]['creator'])
+        creator = "@%s" % op_detail[1]['creator']
         order_list.append("%s %s               %s" % (number_icons[i], creator, o['total']))
         i = i + 1
 
     msg = ''':evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree:
 :earth_asia: 过去 24 小时用户注册数量汇总：
 
-<https://steemd.com/@steem|@steem> 申请牌子数量：        %s
-<https://steemd.com/@steem|@steem> 使用牌子数量：        %s
-<https://steemd.com/@steem|@steem> 使用steem注册用户数量：%s
+@steem 申请牌子数量：        %s
+@steem 使用牌子数量：        %s
+@steem 使用steem注册用户数量：%s
 申请牌子总量：         %s
 使用牌子总量：         %s
 使用steem注册用户数量： %s
@@ -138,7 +138,8 @@ def run():
         ))
     log.output('send discord success')
     db_connection.close()
-    analytic_db_connection.close()
+    if analytic_db_connection != -1:
+        analytic_db_connection.close()
 
 if __name__ == '__main__':
     with suppress(KeyboardInterrupt):
