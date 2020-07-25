@@ -2,10 +2,9 @@
 import json, os, sys, time, re
 import pymysql
 from . import log
-
+env_dist = os.environ
 def connect_db():
     # init db params
-    env_dist = os.environ
     # add DATABASE_URL env support
     database_url = env_dist.get('DATABASE_URL')
     if database_url == None or database_url == "":
