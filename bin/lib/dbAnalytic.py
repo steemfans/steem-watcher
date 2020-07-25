@@ -3,6 +3,8 @@ import json, os, sys, time, re
 import pymysql
 from . import log
 
+mysql_table = ''
+
 def connect_db():
     # init db params
     env_dist = os.environ
