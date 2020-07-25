@@ -3,8 +3,6 @@ import json, os, sys, time, re
 import pymysql
 from . import log
 
-mysql_table = ''
-
 def connect_db():
     # init db params
     env_dist = os.environ
@@ -88,6 +86,12 @@ def connect_db():
 def insert_data(db_connection, data):
     if db_connection == -1:
         return -1
+    mysql_table = env_dist.get('ANALYTICS_MYSQL_TABLE')
+    if mysql_table == None or mysql_table == "":
+        log.output('need ANALYTICS_MYSQL_TABLE')
+        return -1
+        #sys.exit()
+    log.output('ANALYTICS_MYSQL_TABLE: %s' % (mysql_table))
     with db_connection.cursor() as cursor:
         insert_sql = "INSERT INTO `%s` (`event_id`, `total`, `created_at`) VALUES " % mysql_table
         insert_sql = insert_sql + ','.join(data)
