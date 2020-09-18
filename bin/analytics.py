@@ -73,16 +73,16 @@ def run():
         i = i + 1
 
     msg = ''':evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree:
-:earth_asia: 过去 24 小时用户注册数量汇总：
+:earth_asia:  Analytics Data for Last 24 Hours：
 
-@steem 申请牌子数量：        %s
-@steem 使用牌子数量：        %s
-@steem 使用steem注册用户数量：%s
-申请牌子总量：         %s
-使用牌子总量：         %s
-使用steem注册用户数量： %s
+the `pending claimed accounts` number of @steem created:     %s
+the `pending claimed accounts` number of @steem used:        %s
+the number of @steem created accounts by spending steem：    %s
+the number of `pending claimed accounts` created：           %s
+the number of `pending claimed accounts` used:               %s
+the number of spending steem to create new account：         %s
 
-:gem: 过去 24 小时申请牌子排名前 10：
+:gem: Top 10 in last 24 hours(`pending claimed accounts` created)：
 
 %s
 '''
