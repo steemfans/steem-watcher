@@ -87,7 +87,7 @@ def worker(start, end):
             for trans in transactions:
                 # print(trans)
                 operations = trans['operations']
-                insert_into_influxdb(operations, timestamp)
+                insert_into_influxdb(operations, block_info['timestamp'])
                 for op in operations:
                     if op[0] in opType.watchingTypes.keys():
                         with db_connection.cursor() as cursor:

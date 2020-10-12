@@ -16,6 +16,7 @@ notNeedToConvertOps = [
 measurement = 'op_analytics'
 
 def parseOpsIntoInflux(ops, timestamp):
+    timestamp = timestamp.replace(' ', 'T') + 'Z'
     data = []
     for op in ops:
         if op[0] in notNeedToConvertOps:
