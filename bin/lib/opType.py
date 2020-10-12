@@ -9,8 +9,6 @@ watchingTypes = {
 
 notNeedToConvertOps = [
     'vote',
-    'transfer_to_vesting',
-    'withdraw_vesting',
 ]
 
 measurement = 'op_analytics'
@@ -83,6 +81,31 @@ def parseOpsIntoInflux(ops, timestamp):
                 "time": timestamp,
                 "fields": {
                     "creator": op[1]["creator"]
+                }
+            })
+        if op[0] == 'transfer_to_vesting':
+            data.append({
+                "measurement": measurement,
+                "tags": {
+                    "op_type": op[0],
+                },
+                "time": timestamp,
+                "fields": {
+                    "from": op[1]["from"],
+                    "to": op[1]["to"],
+                    "amount": float(op[1]["amount"].split()[0]),
+                }
+            })
+        if op[0] == 'withdraw_vesting':
+            data.append({
+                "measurement": measurement,
+                "tags": {
+                    "op_type": op[0],
+                },
+                "time": timestamp,
+                "fields": {
+                    "account": op[1]["account"],
+                    "vesting_shares": float(op[1]["vesting_shares"].split()[0]),
                 }
             })
 
