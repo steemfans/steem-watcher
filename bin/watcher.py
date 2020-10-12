@@ -1,10 +1,11 @@
 #!/usr/bin/python3 -u
 #encoding:UTF-8
-import json, os, sys, time
+import json, os, sys, time, re
 from contextlib import suppress
 from concurrent import futures
 from steem.blockchain import Blockchain
 from steem.steemd import Steemd
+from influxdb import InfluxDBClient
 import traceback
 from lib import slack
 from lib import db
@@ -33,6 +34,25 @@ print('BLOCK_NUM: %s' % env_block_num)
 print('-------- env params --------')
 
 db_connection = None
+
+# influxdb
+influxdb_client = None
+try:
+    influxdb_url = env_dist.get('INFLUXDB_URL')
+    if influxdb_url == None or influxdb_url == "":
+        print('need INFLUXDB_URL')
+    print('INFLUXDB_URL: %s' % influxdb_url)
+    pattern = re.compile(r'http://(.*):(.*)/(.*)', re.I)
+    influx_match = pattern.match(influxdb_url)
+    if influx_match is None:
+        print('fetch influxdb config failed.')
+    influx_host = influx_match.group(1)
+    influx_port = influx_match.group(2)
+    influx_db = influx_match.group(3)
+    influxdb_client = InfluxDBClient(host=influx_host, port=influx_port, database=influx_db)
+except:
+    print('create influxdb failed', sys.exc_info())
+    influxdb_client = None
 
 # init blockchain
 steemd_nodes = [
@@ -67,6 +87,7 @@ def worker(start, end):
             for trans in transactions:
                 # print(trans)
                 operations = trans['operations']
+                insert_into_influxdb(operations, timestamp)
                 for op in operations:
                     if op[0] in opType.watchingTypes.keys():
                         with db_connection.cursor() as cursor:
@@ -85,6 +106,17 @@ def worker(start, end):
     except:
         print('error: from %s to %s' % (start, end), sys.exc_info())
         #slack.send(':fire: error: from %s to %s' % (start, end))
+
+def insert_into_influxdb(ops, timestamp):
+    if influxdb_client is None:
+        return
+    try:
+        data = opType.parseOpsIntoInflux(ops, timestamp)
+        if len(data) > 0:
+            influxdb_client.write_points(data)
+    except:
+        print('insert data into influxdb failed.', sys.exc_info())
+        return
 
 def get_start_num_from_db():
     global db_connection
@@ -110,7 +142,7 @@ def run():
         start_block_num = start_block_num_from_db
 
     while True:
-        head_block_number = b.info()['head_block_number']
+        head_block_number = b.info()['last_irreversible_block_num']
         end_block_num = int(head_block_number)
         if start_block_num == 0:
             start_block_num = end_block_num - 3
